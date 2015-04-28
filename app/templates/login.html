@@ -1,0 +1,16 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Sign In</h1>
+<form action="" method="post" name="login">
+    <p>
+        E-mail:<br>
+        {{ form.email(size=30) }}
+        <br>
+		Password:<br>
+		{{ form.password(size=30) }}
+    </p>
+    <p><input type="submit" value="Sign In"></p>
+</form>
+{% endblock %}

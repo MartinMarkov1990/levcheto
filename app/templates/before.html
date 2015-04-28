@@ -1,0 +1,7 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Здравейте, {{ g.user.email }}</h1>
+<h3>Благодарим за интереса към Левчето. Играта ще започне в {{ '%H:%M:%S'.format(START_TIME) }}.</h3>
+{% endblock %}

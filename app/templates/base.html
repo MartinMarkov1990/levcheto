@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>Levcheto</title>
+  </head>
+  <body>
+    <div class="menubar">Levcheto: <a href="{{ url_for('index') }}">Home</a>
+    {% if g.user.is_authenticated() %}
+    |   <a href="{{ url_for('logout') }}">Logout</a>
+        <a href="{{ url_for('info') }}">Assets information</a>
+        <a href="{{ url_for('gip') }}">Go on an internship</a>
+    {% endif %}
+    <img src = "static/AIESEC_LOGO_Blue_on_white_height100.gif" style="float: right;width: 200px;height: 50px"/>
+    </div>
+    <div class="logo">
+    <img src = "static/levhce1.png" style="margin-left: 416px; margin-right: 416px;"/>
+    </div>
+    <hr>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+        {% for message in messages %}
+            <li>{{ message }} </li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <h1>{{ now }}</h1>
+    {% if user %}
+        <div class="profile">
+        <h3>E-mail:</h3>
+        <h3>{{ user.email }}</h3>
+        <p>{{ "{0:.2f}".format(user.lv) }} lv</p>
+        </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </body>
+</html>

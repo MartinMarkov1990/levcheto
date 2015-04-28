@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="assets" style="float: left"><h2>Assets:</h2>
+        <form action = "" method="post" name="sellform">
+        {% if owned_stocks.count() > 0 %}
+        <h4>Stocks</h4>
+        <table>
+          <tr>
+            <th>Stock</th>
+            <th>Quantity</th>
+            <th>Price bought</th>
+            <th>Current price</th>
+            <th>Quantity to sell</th>
+          </tr>
+          {% for owned_stock in owned_stocks %}
+          <tr>
+            <td>{{ owned_stock.owned_stocks.stock_code }}</td>
+            <td>{{ owned_stock.owned_stocks.quantity }}</td> 
+            <td>{{ "{0:.2f}".format(owned_stock.owned_stocks.price_bought) }} lv</td>
+            <td>{{ "{0:.2f}".format(owned_stock.stock_price.price) }} lv</td>
+            {% for name, field in sellform._fields.items() %}
+                {% if name == 'sell_st_num_{}'.format(owned_stock.owned_stocks.id) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        {% endif %}
+        {% if owned_bonds.count() > 0 %}
+        <h4>Bonds</h4>
+        <table>
+          <tr>
+            <th>Country</th>
+            <th>Quantity</th>
+            <th>Nominal value</th>
+            <th>Interest rate</th>
+            <th>Quantity to sell</th>
+          </tr>
+          {% for owned_bond in owned_bonds %}
+          <tr>
+            <td>{{ owned_bond.bond_details.country_name }}</td>
+            <td>{{ owned_bond.owned_bonds.quantity }}</td>
+            <td>{{ owned_bond.bond_details.nominal_value }} {{ owned_bond.bond_details.currency_code }}</td> 
+            <td>{{ "{:.1%}".format(owned_bond.owned_bonds.interest_rate) }}</td>
+            {% for name, field in sellform._fields.items() %}
+                {% if name == 'sell_bd_num_{}'.format(owned_bond.owned_bonds.id) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        {% endif %}
+        {% if owned_currency.count() > 0 %}
+        <h4>Валута</h4>
+        <table>
+          <tr>
+            <th>Currency</th>
+            <th>Quantity</th>
+            <th>Price bought</th>
+            <th>Current price</th>
+            <th>Quantity to sell</th>
+          </tr>
+          {% for owned_curr in owned_currency %}
+          <tr>
+            <td>{{ owned_curr.currency_owned.currency_code }}</td>
+            <td>{{ owned_curr.currency_owned.quantity }}</td> 
+            <td>{{ "{0:.2f}".format(owned_curr.currency_owned.price_bought) }} lv</td>
+            <td>{{ "{0:.2f}".format(owned_curr.currency_price.lv_price) }} lv</td>
+            {% for name, field in sellform._fields.items() %}
+                {% if name == 'sell_cu_num_{}'.format(owned_curr.currency_owned.id) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        {% endif %}
+        {% if owned_gold_oil.count() > 0 %}
+        <h4>Злато и петрол</h4>
+        <table>
+          <tr>
+            <th>Gold/Oil</th>
+            <th>Quantity</th>
+            <th>Price bought</th>
+            <th>Current price</th>
+            <th>Quantity to sell</th>
+          </tr>
+          {% for owned_go in owned_gold_oil %}
+          <tr>
+            <td>{{ owned_go.gold_oil_owned.gold_oil }}</td>
+            <td>{{ owned_go.gold_oil_owned.quantity }}</td> 
+            <td>{{ "{0:.2f}".format(owned_go.gold_oil_owned.price_bought) }} lv</td>
+            <td>{{ "{0:.2f}".format(owned_go.gold_oil_prices.price) }} lv</td>
+            {% for name, field in sellform._fields.items() %}
+                {% if name == 'sell_go_num_{}'.format(owned_go.gold_oil_owned.id) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        {% endif %}
+        <input type="submit" value="Sell">
+        </form>
+    </div>
+    
+    <div class="purchase" style="float: right"><h2>Buy:</h2>
+        <form action = "" method="post" name="buyform">
+        <h4>Stocks</h4>
+        <table>
+          <tr>
+            <th>Stock</th>
+            <th>Current price</th>
+            <th>Quantity to buy</th>
+          </tr>
+          {% for stock in stocks %}
+          <tr>
+            <td>{{ stock.stock_id }}</td>
+            <td>{{ "{0:.2f}".format(stock.price) }} lv</td>
+            {% for name, field in buyform._fields.items() %}
+                {% if name == 'buy_st_num_{}'.format(stock.stock_id) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        <h4>Bonds</h4>
+        <table>
+          <tr>
+            <th>Country</th>
+            <th>Nominal value</th>
+            <th>Interest rate</th>
+            <th>Quantity to buy</th>
+          </tr>
+          {% for bond in bonds %}
+          <tr>
+            <td>{{ bond.bond_details.country_name }}</td>
+            <td>{{ bond.bond_details.nominal_value }} {{ bond.bond_details.currency_code }}</td> 
+            <td>{{ "{:.1%}".format(bond.bond_interest.interest_rate) }}</td>
+            {% for name, field in buyform._fields.items() %}
+                {% if name == 'buy_bd_num_{}'.format(bond.bond_details.currency_code) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        <h4>Currency</h4>
+        <table>
+          <tr>
+            <th>Currency</th>
+            <th>Current price</th>
+            <th>Quantity to buy</th>
+          </tr>
+          {% for curr in currency %}
+          <tr>
+            <td>{{ curr.currency_code }}</td>
+            <td>{{ "{0:.2f}".format(curr.lv_price) }} lv</td>
+            {% for name, field in buyform._fields.items() %}
+                {% if name == 'buy_cu_num_{}'.format(curr.currency_code) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        <h4>Gold and Oil</h4>
+        <table>
+          <tr>
+            <th>Gold/Oil</th>
+            <th>Current price</th>
+            <th>Quantity to buy</th>
+          </tr>
+          {% for go in gold_oil %}
+          <tr>
+            <td>{{ go.gold_oil }}</td>
+            <td>{{ "{0:.2f}".format(go.price) }} lv</td>
+            {% for name, field in buyform._fields.items() %}
+                {% if name == 'buy_go_num_{}'.format(go.gold_oil) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        <input type="submit" value="Buy">
+        </form>
+    </div>
+    
+    
+    
+{% endblock %}

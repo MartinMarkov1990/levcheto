@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="assets" style="float: left"><h1>Information</h1>
+        <form action = "" method="post" name="infoform">
+        <h4>Companies</h4>
+        <table>
+          <tr>
+            <th>Company</th>
+            <th>Stock symbol</th>
+            <th>Segment</th>
+            <th>Market</th>
+            <th>Activity</th>
+            {% for year in years_array %}
+                <th>Year {{ year + starting_year - 1 }}</th>
+            {% endfor %}
+            <th>Buy Info:</th>
+          </tr>
+          {% for company in company_details %}
+          <tr>
+            <td>{{ company.company_details.company_name }}</td>
+            <td>{{ company.company_details.stock_id }}</td>
+            <td>{{ company.segments.id }}</td>
+            <td>{{ company.company_details.market }}</td>
+            <td>{{ company.company_details.activity }}</td>
+            {% for year in years_array %}
+                <td>{% for ow_company in owned_company_details %}
+                        {% if ow_company.stock_id == company.company_details.stock_id and ow_company.year_id == year %}
+                            {{ ow_company.company_information }}
+                        {% endif %}
+                    {% endfor %}</td>
+            {% endfor %}
+            {% for name, field in infoform._fields.items() %}
+                {% if name == 'info_st_num_{}'.format(company.company_details.stock_id) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        <h4>Segments</h4>
+        <table>
+          <tr>
+            <th>Segment</th>
+            {% for year in years_array %}
+                <th>Year {{ year + starting_year - 1 }}</th>
+            {% endfor %}
+            <th>Buy Info:</th>
+          </tr>
+          {% for segment in segment_information %}
+          <tr>
+            <td>{{ segment.id }}</td>
+            {% for year in years_array %}
+                <td>{% for ow_segment in owned_segment_information %}
+                        {% if ow_segment.segment_id == segment.id and ow_segment.year_id == year %}
+                            {{ ow_segment.segment_info }}
+                        {% endif %}
+                    {% endfor %}</td>
+            {% endfor %}
+            {% for name, field in infoform._fields.items() %}
+                {% if name == 'info_se_num_{}'.format(segment.id) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        <h4>Countries</h4>
+        <table>
+          <tr>
+            <th>Country</th>
+            <th>Currency code</th>
+            <th>Bond nominal value</th>
+            {% for year in years_array %}
+                <th>Year {{ year + starting_year - 1 }}</th>
+            {% endfor %}
+            <th>Buy Info:</th>
+          </tr>
+          {% for country in countries_info %}
+          <tr>
+            <td>{{ country.country_name }}</td>
+            <td>{{ country.currency_code }}</td>
+            <td>{{ country.nominal_value }}</td>
+            {% for year in years_array %}
+                <td>{% for ow_country in owned_countries_info %}
+                        {% if ow_country.country_code == country.currency_code and ow_country.year_id == year %}
+                            {{ ow_country.country_information }}
+                        {% endif %}
+                    {% endfor %}</td>
+            {% endfor %}
+            {% for name, field in infoform._fields.items() %}
+                {% if name == 'info_cu_num_{}'.format(country.currency_code) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        <h4>Gold and Oil</h4>
+        <table>
+          <tr>
+            <th>Gold/Oil</th>
+            {% for year in years_array %}
+                <th>Year {{ year + starting_year - 1 }}</th>
+            {% endfor %}
+            <th>Buy Info:</th>
+          </tr>
+          {% for go in gold_oil_details %}
+          <tr>
+            <td>{{ go.gold_oil }}</td>
+            {% for year in years_array %}
+                <td>{% for ow_go in owned_gold_oil_details %}
+                        {% if ow_go.gold_oil == go.gold_oil and ow_go.year_id == year %}
+                            {{ ow_go.gold_oil_information }}
+                        {% endif %}
+                    {% endfor %}</td>
+            {% endfor %}
+            {% for name, field in infoform._fields.items() %}
+                {% if name == 'info_go_num_{}'.format(go.gold_oil) %}
+                    <td>{{ field }}</td>
+                {% endif %}
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </table>
+        <input type="submit" value="Buy Info">
+        </form>
+    </div>
+    
+    
+    
+{% endblock %}

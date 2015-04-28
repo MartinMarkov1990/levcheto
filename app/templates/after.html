@@ -1,0 +1,7 @@
+<!-- extend from base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Поздравления, {{ g.user.email }}</h1>
+<h3>Левчето приключи и вашият капитал е {{ total }} лв.</h3>
+{% endblock %}

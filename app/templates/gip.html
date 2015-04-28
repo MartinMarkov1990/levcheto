@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Global Talent</h1>
+<div>Вземете участие в Global Talent програмата и заминете на професионален стаж в чужбина за 6 месеца. В рамките на играта ще бъдете блокирани от всякакви транзакции за 2 периода, но ще получите безплатна информация за страната и сектора, в който отивате на стаж.</div>
+<form action="" method="post" name="GIP">
+    <p>
+        Country:<br>
+        {{ form.country }}
+        <br>
+		Segment:<br>
+		{{ form.segment }}
+    </p>
+    <p><input type="submit" value="Go on exchange"></p>
+</form>
+{% endblock %}
