@@ -1,4 +1,5 @@
 #!flask/bin/python
+#encoding=UTF-8
 from datetime import datetime, timedelta
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -15,7 +16,7 @@ WHOOSH_BASE = os.path.join(basedir, 'search.db')
 WTF_CSRF_ENABLED = False # change this to true once I figure out the templating
 SECRET_KEY = 'you-will-never-guess'
 
-START_TIME = datetime.strptime('2015-04-28 19:20', '%Y-%m-%d %H:%M')
+START_TIME = datetime.strptime('2015-04-28 19:36', '%Y-%m-%d %H:%M')
 PERIOD_DURATION = timedelta(minutes = 6)
 YEARS_COUNT = 5
 PERIODS_IN_YEAR = 4

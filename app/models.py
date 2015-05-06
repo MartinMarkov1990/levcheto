@@ -1,4 +1,5 @@
 #!flask/bin/python
+#encoding=UTF-8
 from flask import render_template, flash, redirect, g, session, url_for, request
 from hashlib import md5
 import re
@@ -105,21 +106,21 @@ class User(db.Model):
                 q = 0
                 continue
             if q > 0:
-                s = s + db.session.query(stock_price).filter(stock_price.time == time and stock_price.stock_id == stock_id).first().price * q
+                s = s + db.session.query(stock_price).filter(stock_price.time == time).filter(stock_price.stock_id == stock_id).first().price * q
             
         for currency_code, q in currency.items():
             if q == '' or q is None:
                 q = 0
                 continue
             if q > 0:
-                s = s + db.session.query(currency_price).filter(currency_price.time == time and currency_price.currency_code == currency_code).first().lv_price * q
+                s = s + db.session.query(currency_price).filter(currency_price.time == time).filter(currency_price.currency_code == currency_code).first().lv_price * q
             
         for g_o, q in gold_oil.items():
             if q == '' or q is None:
                 q = 0
                 continue
             if q > 0:
-                s = s + db.session.query(gold_oil_prices).filter(gold_oil_prices.time == time and gold_oil_prices.gold_oil == g_o).first().price * q
+                s = s + db.session.query(gold_oil_prices).filter(gold_oil_prices.time == time).filter(gold_oil_prices.gold_oil == g_o).first().price * q
             
         for country_code, q in bonds.items():
             if q == '' or q is None:
@@ -127,7 +128,7 @@ class User(db.Model):
                 continue
             if q > 0:
                 qr = db.session.query(bond_details, currency_price).filter(bond_details.currency_code == currency_price.currency_code).\
-                    filter(bond_details.currency_code == country_code and currency_price.time == time)
+                    filter(bond_details.currency_code == country_code).filter(currency_price.time == time)
                 s = s + qr.first().bond_details.nominal_value * qr.first().currency_price.lv_price * q
 
         return s
@@ -145,7 +146,7 @@ class User(db.Model):
                                             stock_code = stock_id,
                                             quantity = q,
                                             time_bought = time,
-                                            price_bought = db.session.query(stock_price).filter(stock_price.time == time and stock_price.stock_id == stock_id).first().price,
+                                            price_bought = db.session.query(stock_price).filter(stock_price.time == time).filter(stock_price.stock_id == stock_id).first().price,
                                             divident_due = ceil(time/PERIODS_IN_YEAR)*PERIODS_IN_YEAR+1))
                                             
         for currency_code, q in currency.items():
@@ -157,7 +158,7 @@ class User(db.Model):
                                               time_bought = time,
                                               quantity = q,
                                               price_bought = db.session.query(currency_price).\
-                                                filter(currency_price.time == time and currency_price.currency_code == currency_code).first().lv_price))
+                                                filter(currency_price.time == time).filter(currency_price.currency_code == currency_code).first().lv_price))
                                                 
         for g_o, q in gold_oil.items():
             if q == '' or q is None:
@@ -168,14 +169,14 @@ class User(db.Model):
                                               time_bought = time,
                                               quantity = q,
                                               price_bought = db.session.query(gold_oil_prices).\
-                                                filter(gold_oil_prices.time == time and gold_oil_prices.gold_oil == g_o).first().price))
+                                                filter(gold_oil_prices.time == time).filter(gold_oil_prices.gold_oil == g_o).first().price))
                                                 
         for country_code, q in bonds.items():
             if q == '' or q is None:
                 q = 0
             if q > 0:
                 qr = db.session.query(bond_details, bond_interest).filter(bond_details.currency_code == bond_interest.country_code).\
-                    filter(bond_details.currency_code == country_code and bond_interest.time == time)
+                    filter(bond_details.currency_code == country_code).filter(bond_interest.time == time)
                 db.session.add(owned_bonds(user_id = self.email,
                                            currency_code = country_code,
                                            quantity = q,
@@ -196,7 +197,7 @@ class User(db.Model):
                 q = 0
                 continue
             qr = db.session.query(owned_stocks, stock_price).filter(owned_stocks.stock_code == stock_price.stock_id).\
-                    filter(owned_stocks.id == stock_id and owned_stocks.user_id == self.email and stock_price.time == time).first()
+                    filter(owned_stocks.id == stock_id).filter(owned_stocks.user_id == self.email).filter(stock_price.time == time).first()
             q = min(q, qr.owned_stocks.quantity)
             s = s + q*qr.stock_price.price
             
@@ -205,7 +206,7 @@ class User(db.Model):
                 q = 0
                 continue
             qr = db.session.query(owned_bonds, bond_details, currency_price).filter(owned_bonds.currency_code == bond_details.currency_code).\
-                    filter(owned_bonds.currency_code == currency_price.currency_code).filter(owned_bonds.id == bond_id and currency_price.time == time).first()
+                    filter(owned_bonds.currency_code == currency_price.currency_code).filter(owned_bonds.id == bond_id).filter(currency_price.time == time).first()
             q = min(q, qr.owned_bonds.quantity)
             s = s + q*qr.owned_bonds.nominal_value*qr.currency_price.lv_price
             
@@ -214,7 +215,7 @@ class User(db.Model):
                 q = 0
                 continue
             qr = db.session.query(currency_owned, currency_price).filter(currency_owned.currency_code == currency_price.currency_code).\
-                    filter(currency_price.time == time and currency_owned == cur_id).first()
+                    filter(currency_price.time == time).filter(currency_owned == cur_id).first()
             q = min(q, qr.currency_owned.quantity)
             s = s + q*qr.currency_price.lv_price
             
@@ -223,7 +224,7 @@ class User(db.Model):
                 q = 0
                 continue
             qr = db.session.query(gold_oil_owned, gold_oil_prices).filter(gold_oil_owned.gold_oil == gold_oil_prices.gold_oil).\
-                    filter(gold_oil_owned.id == g_o and gold_oil_prices.time == time).first()
+                    filter(gold_oil_owned.id == g_o).filter(gold_oil_prices.time == time).first()
             q = min(q, qr.gold_oil_owned.quantity)        
             s = s + q*qr.gold_oil_prices.price
             
@@ -276,13 +277,13 @@ class User(db.Model):
         d = 0
         i = 0
         stocks = db.session.query(owned_stocks, stock_divident).filter(owned_stocks.stock_code == stock_divident.stock_id).\
-                    filter(owned_stocks.user_id == self.email and owned_stocks.divident_due == cp['time_id'] and stock_divident.divident_period == cp['year_id']).\
+                    filter(owned_stocks.user_id == self.email).filter(owned_stocks.divident_due == cp['time_id']).filter(stock_divident.divident_period == cp['year_id']).\
                     filter(cp['period_id'] == 1)
         for stock in stocks:
             if stock.owned_stocks.divident_due <= cp['time_id'] and stock.owned_stocks.divident_due > 0:
                 d = d + stock.owned_stocks.quantity * stock.stock_divident.amount
             
-        for ows in db.session.query(owned_stocks).filter(owned_stocks.user_id == self.email and owned_stocks.divident_due == time):
+        for ows in db.session.query(owned_stocks).filter(owned_stocks.user_id == self.email).filter(owned_stocks.divident_due == time):
             if ows.divident_due <= cp['time_id'] and ows.divident_due > 0:
                 if cp['year_id'] > YEARS_COUNT:
                     ows.divident_due = 0
@@ -290,7 +291,7 @@ class User(db.Model):
                     ows.divident_due = ows.divident_due + PERIODS_IN_YEAR
                 db.session.add(ows)    
                 
-        bonds = db.session.query(owned_bonds).filter(owned_bonds.user_id == self.email and owned_bonds.interest_due == cp['time_id'])
+        bonds = db.session.query(owned_bonds).filter(owned_bonds.user_id == self.email).filter(owned_bonds.interest_due == cp['time_id'])
         for bond in bonds:
             if bond.interest_due <= cp['time_id'] and bond.interest_due > 0:
                 i = i + bond.quantity * bond.nominal_value * bond.interest_rate
@@ -416,12 +417,12 @@ class User(db.Model):
             
         for cur_id in db.session.query(currency_owned.id):
             qr = db.session.query(currency_owned, currency_price).filter(currency_owned.currency_code == currency_price.currency_code).\
-                    filter(currency_price.time == time and currency_owned == cur_id).first()
+                    filter(currency_price.time == time).filter(currency_owned == cur_id).first()
             s = s + qr.currency_owned.quantity*qr.currency_price.lv_price
             
         for g_o in db.session.query(gold_oil_owned.id):
             qr = db.session.query(gold_oil_owned, gold_oil_prices).filter(gold_oil_owned.gold_oil == gold_oil_prices.gold_oil).\
-                    filter(gold_oil_owned.id == g_o and gold_oil_prices.time == time).first()
+                    filter(gold_oil_owned.id == g_o).filter(gold_oil_prices.time == time).first()
             s = s + qr.gold_oil_owned.quantity*qr.gold_oil_prices.price
             
         return s

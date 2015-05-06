@@ -1,4 +1,5 @@
 #!flask/bin/python
+#encoding=UTF-8
 from flask import render_template, flash, redirect, g, session, url_for, request
 from app import app, lm, db, models, bcrypt
 from .forms import LoginForm, GIPForm
@@ -13,10 +14,17 @@ from wtforms.validators import DataRequired
 
 
 
+def get_total_seconds(td):
+    """ This little helper deals with the timedelta division on python 2. """
+    return (td.microseconds + (td.seconds + td.days * 24 * 3600) * 1e6) / 1e6
+
 def current_period():
     """" This calculates the current period in-game """
     cur_per = {}
-    cur_per['time_id'] = ceil((datetime.today() - START_TIME) / PERIOD_DURATION)
+    if sys.version_info >= (3, 0):
+        cur_per['time_id'] = ceil((datetime.today() - START_TIME) / PERIOD_DURATION)
+    else:
+        cur_per['time_id'] = ceil(get_total_seconds(datetime.today() - START_TIME) / get_total_seconds(PERIOD_DURATION))
     cur_per['year_id'] = ceil(cur_per['time_id'] / PERIODS_IN_YEAR)
     cur_per['period_id'] = cur_per['time_id'] - ((cur_per['year_id'] - 1) * PERIODS_IN_YEAR)
     return cur_per

@@ -1,4 +1,5 @@
 #!flask/bin/python
+#encoding=UTF-8
 import os
 from flask.ext.wtf import Form
 from wtforms import StringField, PasswordField, validators, SelectField

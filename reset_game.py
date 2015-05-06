@@ -1,4 +1,5 @@
 #!flask/bin/python
+#encoding=UTF-8
 from app import db, models
 
 
