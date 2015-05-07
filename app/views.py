@@ -10,6 +10,7 @@ from math import ceil
 from flask.ext.wtf import Form
 from wtforms import StringField, PasswordField, IntegerField, BooleanField, validators
 from wtforms.validators import DataRequired
+import sys
 
 
 
@@ -21,9 +22,9 @@ def get_total_seconds(td):
 def current_period():
     """" This calculates the current period in-game """
     cur_per = {}
-    if sys.version_info >= (3, 0):
+   try:
         cur_per['time_id'] = ceil((datetime.today() - START_TIME) / PERIOD_DURATION)
-    else:
+    except:
         cur_per['time_id'] = ceil(get_total_seconds(datetime.today() - START_TIME) / get_total_seconds(PERIOD_DURATION))
     cur_per['year_id'] = ceil(cur_per['time_id'] / PERIODS_IN_YEAR)
     cur_per['period_id'] = cur_per['time_id'] - ((cur_per['year_id'] - 1) * PERIODS_IN_YEAR)

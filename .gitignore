@@ -2,6 +2,6 @@
 *.pyo
 app.db
 search.db
-flask
+flask/
 *.mo
 prices and info.py

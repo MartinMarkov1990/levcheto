@@ -576,7 +576,7 @@ class gold_oil_info_owned(db.Model):
 class owned_stocks(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     user_id = db.Column(db.String(120), db.ForeignKey(User.email))
-    stock_code = db.Column(db.Integer, db.ForeignKey(company_details.stock_id))
+    stock_code = db.Column(db.String(6), db.ForeignKey(company_details.stock_id))
     quantity = db.Column(db.Integer)
     time_bought = db.Column(db.Integer)
     price_bought = db.Column(db.Float)
