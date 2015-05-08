@@ -116,6 +116,7 @@ def before_request():
         if g.cp['year_id'] <= 0 and request.endpoint != 'before':
             return redirect(url_for('before'))
         g.user.pay_dividents(g.cp)
+        g.user.refresh_GIP_status(g.cp)
         if g.cp['year_id'] > YEARS_COUNT and request.endpoint != 'after':
             return redirect(url_for('after'))
         if g.user.blocked:

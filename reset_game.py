@@ -32,7 +32,7 @@ for i in models.GIP_EPs.query.all():
     
 for i in models.User.query.all():
     i.lv = 10000
-    i.blocked = False
+    i.on_internship = False
     
 db.session.commit()
     

@@ -458,6 +458,15 @@ class User(db.Model):
         db.session.commit()
         flash('Successfully went to an internship in {0} in the {1} segment.'.format(country, segment))
         return redirect(url_for('info'))
+        
+    def refresh_GIP_status(self, cp):
+        if self.on_internship:
+            gips = db.session.query(GIP_EPs).filter(GIP_EPs.user_id == self.email).filter(GIP_EPs.departure_time <= cp['time_id']).\
+            filter(GIP_EPs.return_time > cp['time_id']).count()
+            if gips == 0:
+                self.on_internship = False
+                flash('Returned from internship.')
+        return True
     
     
     
