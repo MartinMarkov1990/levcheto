@@ -22,7 +22,7 @@ def get_total_seconds(td):
 def current_period():
     """" This calculates the current period in-game """
     cur_per = {}
-   try:
+    try:
         cur_per['time_id'] = ceil((datetime.today() - START_TIME) / PERIOD_DURATION)
     except:
         cur_per['time_id'] = ceil(get_total_seconds(datetime.today() - START_TIME) / get_total_seconds(PERIOD_DURATION))
@@ -118,6 +118,11 @@ def before_request():
         g.user.pay_dividents(g.cp)
         if g.cp['year_id'] > YEARS_COUNT and request.endpoint != 'after':
             return redirect(url_for('after'))
+        if g.user.blocked:
+            return redirect(url_for('blocked'))
+        if g.user.on_internship and request.method == 'POST':
+            flash('You are currently on an internship and cannot make any transactions.')
+            return redirect(url_for(request.endpoint, method = 'GET'))
 
 
 @app.errorhandler(404)
@@ -324,3 +329,9 @@ def gip():
     else:
         form = GIPForm()
     return render_template("gip.html", user = g.user, now = now, form=form)
+    
+@app.route("/blocked")
+@login_required
+def blocked():
+    now = show.current_period(g.cp)
+    return render_template("blocked.html", user - g.user, now = now)

@@ -16,7 +16,7 @@ WHOOSH_BASE = os.path.join(basedir, 'search.db')
 WTF_CSRF_ENABLED = False # change this to true once I figure out the templating
 SECRET_KEY = 'you-will-never-guess'
 
-START_TIME = datetime.strptime('2015-04-28 19:36', '%Y-%m-%d %H:%M')
+START_TIME = datetime.strptime('2015-05-08 04:50', '%Y-%m-%d %H:%M')
 PERIOD_DURATION = timedelta(minutes = 6)
 YEARS_COUNT = 5
 PERIODS_IN_YEAR = 4

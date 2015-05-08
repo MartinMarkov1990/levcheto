@@ -18,6 +18,7 @@ class User(db.Model):
     password = db.Column(db.String)
     authenticated = db.Column(db.Boolean, default=False)
     blocked = db.Column(db.Boolean, default=False)
+    on_internship = db.Column(db.Boolean, default=False)
     admin = db.Column(db.Boolean, default=False)
     lv = db.Column(db.Integer, default = 10000)
     owned_stocks = db.relationship('owned_stocks',
@@ -36,23 +37,27 @@ class User(db.Model):
     def get_owned_stocks(self, time):
         return db.session.query(User, owned_stocks, stock_price).\
             filter(User.email == self.email).\
+            filter(owned_stocks.user_id == self.email).\
             filter(owned_stocks.stock_code == stock_price.stock_id).\
             filter(stock_price.time == time)
             
     def get_owned_bonds(self):
         return db.session.query(User, owned_bonds, bond_details).\
             filter(User.email == self.email).\
+            filter(owned_bonds.user_id == self.email).\
             filter(owned_bonds.currency_code == bond_details.currency_code)
             
     def get_owned_currency(self, time):
         return db.session.query(User, currency_owned, currency_price).\
             filter(User.email == self.email).\
+            filter(currency_owned.user_id == self.email).\
             filter(currency_owned.currency_code == currency_price.currency_code).\
             filter(currency_price.time == time)
     
     def get_owned_gold_oil(self, time):
         return db.session.query(User, gold_oil_owned, gold_oil_prices).\
             filter(User.email == self.email).\
+            filter(gold_oil_owned.user_id == self.email).\
             filter(gold_oil_owned.gold_oil == gold_oil_prices.gold_oil).\
             filter(gold_oil_prices.time == time)
             
@@ -283,7 +288,7 @@ class User(db.Model):
             if stock.owned_stocks.divident_due <= cp['time_id'] and stock.owned_stocks.divident_due > 0:
                 d = d + stock.owned_stocks.quantity * stock.stock_divident.amount
             
-        for ows in db.session.query(owned_stocks).filter(owned_stocks.user_id == self.email).filter(owned_stocks.divident_due == time):
+        for ows in db.session.query(owned_stocks).filter(owned_stocks.user_id == self.email).filter(owned_stocks.divident_due == cp['time_id']):
             if ows.divident_due <= cp['time_id'] and ows.divident_due > 0:
                 if cp['year_id'] > YEARS_COUNT:
                     ows.divident_due = 0
@@ -430,7 +435,7 @@ class User(db.Model):
     def go_GIP(self, country, segment, cp):
         gipep = GIP_EPs(user_id = self.email, country_name = country, segment_id = segment, departure_time = cp['time_id'], return_time = cp['time_id'] + 2)
         db.session.add(gipep)
-        self.blocked = True
+        self.on_internship = True
         cu_qr_ck = db.session.query(bond_details, country_info_owned).filter(bond_details.currency_code == country_info_owned.country_code).\
                     filter(bond_details.country_name == country).filter(country_info_owned.year_id == cp['year_id'])
         if cu_qr_ck.count() == 0:
